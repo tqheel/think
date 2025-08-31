@@ -119,7 +119,7 @@ public static class ModelBuilders
         public static Mood GetRandomMood()
         {
             var moods = GetAllMoodValues().ToArray();
-            var random = new Random();
+            var random = Random.Shared;
             return moods[random.Next(moods.Length)];
         }
     }
