@@ -1,16 +1,13 @@
-using Microsoft.EntityFrameworkCore;
 using ThinkDiary.Core.Models;
 
 namespace ThinkDiary.Data.Migration;
 
 public class DataMigrationService
 {
-    private readonly DiaryDbContext _efContext;
     private readonly FirestoreService _firestoreService;
 
-    public DataMigrationService(DiaryDbContext efContext, FirestoreService firestoreService)
+    public DataMigrationService(FirestoreService firestoreService)
     {
-        _efContext = efContext;
         _firestoreService = firestoreService;
     }
 
@@ -20,17 +17,11 @@ public class DataMigrationService
 
         try
         {
-            // Step 1: Migrate Tags first (to get their new IDs)
-            var tagMigrationResult = await MigrateTagsAsync();
-            result.TagsMigrated = tagMigrationResult.TagsMigrated;
-            result.TagMappings = tagMigrationResult.TagMappings;
-
-            // Step 2: Migrate DiaryEntries with updated tag references
-            var entryMigrationResult = await MigrateDiaryEntriesAsync(result.TagMappings);
-            result.EntriesMigrated = entryMigrationResult.EntriesMigrated;
-
+            // Note: EF Core migration is now disabled since we removed Entity Framework dependencies
+            // This method is kept for future use when actual data migration is needed
+            
             result.IsSuccess = true;
-            result.Message = $"Migration completed successfully. Migrated {result.EntriesMigrated} entries and {result.TagsMigrated} tags.";
+            result.Message = "Migration completed. No EF Core data to migrate - using Firestore directly.";
         }
         catch (Exception ex)
         {
@@ -41,33 +32,11 @@ public class DataMigrationService
         return result;
     }
 
-    private async Task<TagMigrationResult> MigrateTagsAsync()
-    {
-        var result = new TagMigrationResult();
-        
-        // Note: This method would be used when actual EF Core data exists
-        // For now, we'll return empty result since we're working with Firestore models
-        Console.WriteLine("Tag migration skipped - no EF Core data to migrate");
-        
-        return result;
-    }
-
-    private async Task<EntryMigrationResult> MigrateDiaryEntriesAsync(Dictionary<string, string> tagMappings)
-    {
-        var result = new EntryMigrationResult();
-        
-        // Note: This method would be used when actual EF Core data exists
-        // For now, we'll return empty result since we're working with Firestore models
-        Console.WriteLine("Entry migration skipped - no EF Core data to migrate");
-        
-        return result;
-    }
-
     public async Task<bool> ValidateMigrationAsync()
     {
         try
         {
-            // For now, just validate that Firestore service is working
+            // Validate that Firestore service is working
             var firestoreEntries = await _firestoreService.GetEntriesAsync();
             var firestoreTags = await _firestoreService.GetAllTagsAsync();
 
