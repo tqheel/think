@@ -272,6 +272,76 @@ dotnet ef database update
 dotnet format
 ```
 
+## 🧪 Testing
+
+The project includes comprehensive unit tests for all core models with ≥90% code coverage.
+
+### Running Tests
+
+```bash
+# Run all tests
+dotnet test
+
+# Run tests with coverage
+dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+# Run tests with detailed output
+dotnet test --verbosity detailed
+
+# Run specific test class
+dotnet test --filter "FullyQualifiedName~DiaryEntryTests"
+```
+
+### Test Structure
+
+```
+src/ThinkDiary.Tests/
+├── UnitTests/
+│   └── Models/
+│       ├── DiaryEntryTests.cs    # 47 tests for DiaryEntry model
+│       ├── TagTests.cs           # 24 tests for Tag model
+│       └── MoodTests.cs          # 77 tests for Mood enum
+└── TestData/
+    └── ModelBuilders.cs          # Test data builders
+```
+
+### Testing Patterns
+
+#### Test Data Builders
+The project uses the Builder pattern for creating consistent test data:
+
+```csharp
+// Create default diary entry
+var entry = ModelBuilders.DiaryEntryBuilder.CreateDefault();
+
+// Create entry with specific mood
+var happyEntry = ModelBuilders.DiaryEntryBuilder.CreateWithMood(Mood.Happy);
+
+// Create tag with color
+var tag = ModelBuilders.TagBuilder.CreateWithColor("#FF0000");
+```
+
+#### FluentAssertions
+Tests use FluentAssertions for readable assertions:
+
+```csharp
+entry.Id.Should().NotBeEmpty("Id should be automatically generated");
+entry.Tags.Should().NotBeNull().And.BeEmpty("Tags should be initialized as empty list");
+entry.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+```
+
+#### Test Coverage
+- **DiaryEntry**: All properties, collections, nullable behavior, edge cases
+- **Tag**: Property validation, collection operations, relationships
+- **Mood**: Enum values, parsing, serialization, conversions
+
+### Continuous Integration
+GitHub Actions workflow automatically:
+- Runs tests on Ubuntu, Windows, macOS
+- Checks code formatting
+- Generates coverage reports
+- Uploads coverage to Codecov
+
 ## 🎨 UI Design Concepts
 
 ### Layout
