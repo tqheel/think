@@ -3,5 +3,9 @@
   "AppSettings": {
     "Theme": "Light",
     "AutoSave": true
+  },
+  "Firestore": {
+    "ProjectId": "thinkdiary-dev",
+    "CredentialFile": "path/to/service-account-key.json"
   }
 }
